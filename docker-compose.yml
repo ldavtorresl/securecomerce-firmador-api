@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  firmador-sch:
+    build:
+      context: .  # Contexto de construcción: el directorio actual (donde está el Dockerfile)
+    container_name: securecommerce-firmador
+    restart: always
+    ports:
+      - "8113:8113"  # Mapeo del puerto local 8113 al puerto 8113 del contenedor
+    volumes:
+      - ./uploads:/uploads  # Monta la carpeta uploads local en /app/uploads dentro del contenedor
+    networks:
+      - securecommerce_default  # Asigna la red personalizada al servicio
+
+networks:
+  securecommerce_default:
+    name: securecommerce_default
+    external: true
+    driver: bridge  # Usa el controlador de red 'bridge' (puedes cambiarlo según tus necesidades)
