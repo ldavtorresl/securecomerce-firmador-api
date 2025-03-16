@@ -11,6 +11,7 @@ public class FirmarDocumentoFilter {
 	private Object dteJson;
 	private String dte;
 	private boolean activo;
+	private String ambiente;
 	
 
 	public String getPasswordPub() {
@@ -69,5 +70,12 @@ public class FirmarDocumentoFilter {
 	public void setDte(String dte) {
 		this.dte = dte;
 	}
-	
+
+	public String getAmbiente() {
+		return ambiente;
+	}
+
+	public void setAmbiente(String ambiente) {
+		this.ambiente = ambiente;
+	}
 }
