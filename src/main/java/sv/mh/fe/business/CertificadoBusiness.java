@@ -36,7 +36,7 @@ public class CertificadoBusiness {
 		CertificadoMH certificado = null;
 		String crypto = cryptographic.encrypt(filter.getPasswordPri(), Cryptographic.SHA512);
 		
-		Path path = Paths.get(Constantes.DIRECTORY_UPLOADS,"/",filter.getAmbiente(),"/",filter.getNit()+".crt");
+		Path path = Paths.get(Constantes.DIRECTORY_UPLOADS +"/"+filter.getAmbiente()+"/",filter.getNit()+".crt");
 		String contenido = fileUtilis.LeerArchivo(path);
 		certificado = xmlMapper.readValue(contenido, CertificadoMH.class);
 		
