@@ -6,9 +6,9 @@ RUN mkdir -p /app/uploads
 RUN mkdir -p /app/uploads/DESARROLLO
 RUN mkdir -p /app/uploads/PRODUCCION
 
-COPY uploads/*.crt /uploads/
-COPY uploads/DESARROLLO/*.crt /uploads/DESARROLLO
-COPY uploads/PRODUCCION/*.crt /uploads/PRODUCCION
+# COPY uploads/*.crt /uploads/
+COPY uploads/DESARROLLO/*.crt /uploads/DESARROLLO/
+COPY uploads/PRODUCCION/*.crt /uploads/PRODUCCION/
 
 COPY ${DEPENDENCY}/BOOT-INF/lib /app/lib
 COPY ${DEPENDENCY}/META-INF /app/META-INF
