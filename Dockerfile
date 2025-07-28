@@ -26,9 +26,6 @@ RUN apk add --no-cache \
 # Copiar el jar generado en build (renombrado para simplificar)
 COPY --from=build /app/target/securecomerce-firmador.jar /app/securecomerce-firmador.jar
 
-# Si tienes reports, los copias también (opcional)
-COPY reports /app/reports
-
 RUN chown -R spring:spring /app
 USER spring
 
