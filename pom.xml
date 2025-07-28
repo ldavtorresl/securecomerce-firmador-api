@@ -19,6 +19,7 @@
 	</parent>
 
 	<build>
+		<finalName>sv.mh.fe.api.firmador</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
