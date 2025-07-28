@@ -24,7 +24,7 @@ RUN apk add --no-cache \
     addgroup -S spring && adduser -S spring -G spring
 
 # Copiar el jar generado en build (renombrado para simplificar)
-COPY --from=build /app/target/sv.mh.fe.api.firmador.jar /app/app.jar
+COPY --from=build /app/target/securecomerce-firmador.jar /app/securecomerce-firmador.jar
 
 # Si tienes reports, los copias también (opcional)
 COPY reports /app/reports
@@ -40,5 +40,5 @@ ENV JAVA_TOOL_OPTIONS="-XX:+UseContainerSupport \
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "securecomerce-firmador.jar"]
 
