@@ -15,6 +15,7 @@ import sv.mh.fe.constantes.Constantes;
 import sv.mh.fe.filter.FirmarDocumentoFilter;
 import sv.mh.fe.models.CertificadoMH;
 import sv.mh.fe.security.Cryptographic;
+import sv.mh.fe.utils.CloudStorageService;
 import sv.mh.fe.utils.FileUtils;
 
 @Service
@@ -25,6 +26,9 @@ public class CertificadoBusiness {
 	
 	@Autowired
 	private FileUtils fileUtilis;
+
+	@Autowired
+	private CloudStorageService cloudStorageService;
 	
 	private static Logger logger = LoggerFactory.getLogger(CertificadoBusiness.class);		
 	
@@ -35,9 +39,11 @@ public class CertificadoBusiness {
 
 		CertificadoMH certificado = null;
 		String crypto = cryptographic.encrypt(filter.getPasswordPri(), Cryptographic.SHA512);
-		
-		Path path = Paths.get(Constantes.DIRECTORY_UPLOADS +"/"+filter.getAmbiente()+"/",filter.getNit()+".crt");
-		String contenido = fileUtilis.LeerArchivo(path);
+		String bucketName = "securecomerce";
+		String objectName = (filter.getAmbiente().contentEquals("DESARROLLO") ? "certificados-NONPRD" : "certificados-PRD") + "/"+ filter.getNit()+".crt";
+		byte[] contenidoCertificado = cloudStorageService.readFileAsBytes(bucketName, objectName);
+//		Path path = Paths.get(Constantes.DIRECTORY_UPLOADS +"/"+filter.getAmbiente()+"/",filter.getNit()+".crt");
+		String contenido = fileUtilis.LeerArchivoDesdeBytes(contenidoCertificado);
 		certificado = xmlMapper.readValue(contenido, CertificadoMH.class);
 		
 		if(certificado.getPrivateKey().getClave().equals(crypto)){

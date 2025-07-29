@@ -1,10 +1,7 @@
 package sv.mh.fe.utils;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import org.springframework.stereotype.Service;
 
@@ -48,6 +45,18 @@ public class FileUtils {
 			}
 		}
 		return contendido.toString();
+	}
+
+
+	public String LeerArchivoDesdeBytes(byte[] bytes) throws IOException {
+		try (BufferedReader buffer = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes), StandardCharsets.UTF_8))) {
+			StringBuilder contenido = new StringBuilder();
+			String linea;
+			while ((linea = buffer.readLine()) != null) {
+				contenido.append(linea);
+			}
+			return contenido.toString();
+		}
 	}
 	
 }
