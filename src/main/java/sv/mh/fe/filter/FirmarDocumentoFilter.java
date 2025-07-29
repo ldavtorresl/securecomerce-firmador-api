@@ -11,7 +11,7 @@ public class FirmarDocumentoFilter {
 	private Object dteJson;
 	private String dte;
 	private boolean activo;
-	private String ambiente;
+	private String ambiente; //DESARROLLO O PRODUCCION
 	
 
 	public String getPasswordPub() {
