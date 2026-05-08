@@ -43,9 +43,11 @@ public abstract class AbstractValidations {
 		List<String> requeridos = new ArrayList<>();				
 		if(nit==null) {
 			requeridos.add(REQ_NIT);
-		}else if(!nit.matches("\\d{14}")){
-			requeridos.add(REQ_NIT_FORMATO);
 		}
+		
+//		else if(!nit.matches("\\d{14}")){
+//			requeridos.add(REQ_NIT_FORMATO);
+//		}
 		return requeridos;
 	}
 		
