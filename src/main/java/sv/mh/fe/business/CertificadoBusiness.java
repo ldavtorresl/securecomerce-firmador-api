@@ -41,6 +41,7 @@ public class CertificadoBusiness {
 		String crypto = cryptographic.encrypt(filter.getPasswordPri(), Cryptographic.SHA512);
 		String bucketName = "securecomerce";
 		String objectName = (filter.getAmbiente().contentEquals("DESARROLLO") ? "certificados-NONPRD" : "certificados-PRD") + "/"+ filter.getNit()+".crt";
+		System.out.println("Ruta: " + objectName);
 		byte[] contenidoCertificado = cloudStorageService.readFileAsBytes(bucketName, objectName);
 //		Path path = Paths.get(Constantes.DIRECTORY_UPLOADS +"/"+filter.getAmbiente()+"/",filter.getNit()+".crt");
 		String contenido = fileUtilis.LeerArchivoDesdeBytes(contenidoCertificado);
