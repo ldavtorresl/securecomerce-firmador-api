@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import sv.mh.fe.configuration.BucketsProperties;
 import sv.mh.fe.constantes.Constantes;
 import sv.mh.fe.filter.FirmarDocumentoFilter;
 import sv.mh.fe.models.CertificadoMH;
@@ -29,7 +30,10 @@ public class CertificadoBusiness {
 
 	@Autowired
 	private CloudStorageService cloudStorageService;
-	
+
+	@Autowired
+	private BucketsProperties buckets;
+
 	private static Logger logger = LoggerFactory.getLogger(CertificadoBusiness.class);		
 	
 	public CertificadoMH recuperarCertifiado(FirmarDocumentoFilter filter) throws IOException, NoSuchAlgorithmException {		
@@ -39,9 +43,14 @@ public class CertificadoBusiness {
 
 		CertificadoMH certificado = null;
 		String crypto = cryptographic.encrypt(filter.getPasswordPri(), Cryptographic.SHA512);
-		String bucketName = "securecomerce";
+		// El bucket viene de la configuración (gcp.buckets.certificados), no escrito
+		// a mano: tras separar los buckets, los certificados dejaron de estar en el
+		// histórico. La ruta dentro del bucket no cambió. Ver BucketsProperties.
+		String bucketName = buckets.getCertificados();
 		String objectName = (filter.getAmbiente().contentEquals("DESARROLLO") ? "certificados-NONPRD" : "certificados-PRD") + "/"+ filter.getNit()+".crt";
-		System.out.println("Ruta: " + objectName);
+		// Se registra el bucket junto con la ruta: sin el bucket, un "no existe el
+		// archivo" no dice si falta el objeto o si se está mirando el lugar viejo.
+		logger.info("Leyendo certificado de gs://{}/{}", bucketName, objectName);
 		byte[] contenidoCertificado = cloudStorageService.readFileAsBytes(bucketName, objectName);
 //		Path path = Paths.get(Constantes.DIRECTORY_UPLOADS +"/"+filter.getAmbiente()+"/",filter.getNit()+".crt");
 		String contenido = fileUtilis.LeerArchivoDesdeBytes(contenidoCertificado);

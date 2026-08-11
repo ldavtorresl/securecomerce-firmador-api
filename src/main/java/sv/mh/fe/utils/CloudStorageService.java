@@ -65,7 +65,9 @@ public class CloudStorageService {
     public byte[] readFileAsBytes(String bucketName, String objectName) {
         Blob blob = storage.get(bucketName, objectName);
         if (blob == null || !blob.exists()) {
-            throw new IllegalArgumentException("El archivo no existe: " + objectName);
+            // Se nombra el bucket: sin él, "no existe el archivo" no distingue entre
+            // un certificado que falta y estar mirando el bucket equivocado.
+            throw new IllegalArgumentException("El archivo no existe: gs://" + bucketName + "/" + objectName);
         }
         return blob.getContent();
     }

@@ -7,3 +7,18 @@ spring:
     allow-bean-definition-overriding: true
   application:
     name: Firma-Digital
+
+# Buckets de Cloud Storage.
+#
+# Tiene que coincidir con lo que tenga configurado securecomerce-backend: ese
+# sube los certificados y este servicio los lee. Los dos usan los mismos nombres
+# de propiedad, asi que se configuran con la misma variable de entorno:
+#
+#   GCP_BUCKETS_CERTIFICADOS=securecomerce-certs
+#
+# Sin definir nada se sigue usando el bucket historico `securecomerce`, tal como
+# antes de separar los buckets. Ver BucketsProperties.
+gcp:
+  buckets:
+    # principal: securecomerce
+    # certificados: securecomerce-certs
