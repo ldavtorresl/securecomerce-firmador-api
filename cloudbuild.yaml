@@ -1,0 +1,56 @@
+substitutions:
+  # Dónde se publica la imagen: el MISMO repositorio de Artifact Registry que
+  # securecomerce-backend (cloud-run-source-deploy, us-central1), cada servicio
+  # con su propia carpeta. Ruta completa SIN etiqueta; se publica como `latest`,
+  # igual que el backend. Un activador puede pasar otra ruta con esta misma
+  # sustitución.
+  #
+  # La cuenta de servicio del activador necesita el rol "Escritor de Artifact
+  # Registry" (roles/artifactregistry.writer) sobre cloud-run-source-deploy. Si
+  # el paso de push falla con "artifactregistry.repositories.uploadArtifacts
+  # denied", es ese permiso.
+  _IMAGEN: us-central1-docker.pkg.dev/infra-falcon-460302-k6/cloud-run-source-deploy/securecomerce-firmador-api/securecomerce-firmador
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  # Si el activador trae sustituciones que este archivo no usa (los creados al
+  # desplegar desde el código fuente traen _AR_HOSTNAME, _AR_REPOSITORY…), sin
+  # esto Cloud Build falla antes de empezar.
+  substitution_option: ALLOW_LOOSE
+
+steps:
+  # Paso 1: Construye la imagen (el Dockerfile compila con Maven adentro)
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', '${_IMAGEN}', '.']
+
+  # Paso 2: Envía la imagen a Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', '${_IMAGEN}']
+
+  # Paso 3: Despliega en Cloud Run al servicio securecomerce-firmador
+  #
+  # Solo se fijan la imagen y lo que se decidió cambiar. Lo demás --variables
+  # de entorno, cuenta de servicio, instancias mínimas y máximas,
+  # concurrencia, quién puede invocarlo-- lo conserva `gcloud run deploy` tal
+  # como está en el servicio. En particular NO va --allow-unauthenticated: el
+  # permiso de invocación se queda como está configurado hoy.
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'securecomerce-firmador'
+      - '--image=${_IMAGEN}'
+      - '--region=us-central1'
+      - '--platform=managed'
+      # El servicio escucha en 8113 (application.yml), no en el 8080 que
+      # Cloud Run asume por defecto.
+      - '--port=8113'
+      # 700 MiB de memoria por instancia. La JVM toma su tope del límite del
+      # contenedor (-XX:+UseContainerSupport del Dockerfile).
+      - '--memory=700Mi'
+      # Facturación basada en solicitudes: la CPU solo se asigna (y se cobra)
+      # mientras se atiende una petición. Firmar es síncrono: el servicio
+      # responde con el documento firmado y no deja trabajo en segundo plano,
+      # así que no necesita CPU entre peticiones.
+      - '--cpu-throttling'
